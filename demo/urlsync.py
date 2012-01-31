@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 import syncset
 
 class SyncURL(syncset.SyncSetMember):
@@ -11,22 +11,26 @@ class SyncURL(syncset.SyncSetMember):
    def __repr__(self): return self.__class__.__name__+repr((self.url, self.last_modified))
 
 # URLs
-foo = "http://example.com/foo.html"
-bar = "http://example.com/bar.html"
-baz = "http://example.com/baz.html"
+foo = "http://mysrv/foo.html"
+bar = "http://mysrv/bar.html"
+baz = "http://mysrv/baz.html"
 
 #My version 
 myurls = syncset.OneWaySyncSet()
-myurls.add(SyncURL(foo, datetime(2012, 1, 1, 11, 30, 2)))
-myurls.add(SyncURL(bar, datetime(2011, 8, 1, 17, 23, 2)))
-myurls.add(SyncURL(baz, datetime(2012, 2, 1, 9, 12, 3)))
+myurls.add(SyncURL(foo, date(2012, 1, 1)))
+myurls.add(SyncURL(bar, date(2011, 12, 8)))
 
 # Server version
 serverurls = syncset.OneWaySyncSet()
-serverurls.add(SyncURL(foo, datetime(2012, 2, 1, 9, 12, 23)))
-serverurls.add(SyncURL(bar, datetime(2011, 12, 8, 2, 6, 18)))
-serverurls.add(SyncURL(baz, datetime(2012, 2, 1, 9, 12, 3)))
+serverurls.add(SyncURL(foo, date(2012, 2, 1)))
+serverurls.add(SyncURL(bar, date(2011, 12, 8)))
+serverurls.add(SyncURL(baz, date(2012, 2, 15)))
 
-print myurls.diff(serverurls)
+only_in_self, only_in_master, outdated_in_self, updated_in_master = myurls.diff(serverurls)
+print only_in_self
+print only_in_master
+print outdated_in_self
+print updated_in_master
 
-print myurls.update(serverurls)
+myurls.update(serverurls)
+print myurls
