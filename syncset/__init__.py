@@ -391,24 +391,3 @@ class SyncSetMember(object):
         # Use the comparison implementation of whatever object type
         # is used as changekey.
         return cmp(self.get_changekey(), other.get_changekey())
-
-
-class DemoMember(SyncSetMember):
-    """
-    Provided as an example of subclassing SyncSetMember. Models a simple VCS.
-    """
-    def __init__(self, filename, revision):
-        self.filename = filename
-        self.revision = revision
-
-    def get_id(self):
-        return self.filename
-
-    def get_changekey(self):
-        return self.revision
-
-    def __repr__(self):
-        return self.__class__.__name__+repr((self.filename, self.revision))
-
-    def __unicode__(self):
-        return u'File: %s revision: %s' % (self.filename, self.revision)
