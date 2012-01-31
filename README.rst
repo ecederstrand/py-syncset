@@ -1,10 +1,10 @@
 Python SyncSet
 ==============
 `SyncSet` is an extension of the standard Python `set()`. With `SyncSet`, you can do set operations
-on sets of objects that, in addition to the normal unique ID of set members, has a revision
+on sets of objects that, in addition to the normal unique ID of set members, has a changekey
 attribute (a timestamp, autoincrement value, revision ID etc.). Via set operations and a custom `diff()`
-method, you can do one- or two-way synchronization of comparable object sets. Examples are syncing files,
-contacts and calendar items.
+method, you can do one- or two-way synchronization of comparable object sets via the `OneWaySyncSet` and
+`TwoWaySyncSet` classes, respectively. Examples are syncing files, contacts and calendar items.
 
 
 Usage
@@ -12,7 +12,7 @@ Usage
 Let's say you want so refresh a local copy of some URLs from a server. You get a timestamp from the `Last-Modified`
 HTTP header.
 
-First, we want to tell `syncset` what constitutes a unique ID is and what we constitutes a revision (changekey). We 
+First, we want to tell `syncset` what constitutes a unique ID is and what constitutes a revision (changekey). We 
 subclass  `SyncSetMember` and make 'url' the unique ID and 'last_modified' the changekey.
 
 >>> import syncset
