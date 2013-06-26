@@ -199,6 +199,16 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.assertEqual(id(item), id(self.a1))
         self.assertRaises(KeyError, self.myslave.pop)
 
+    # Strictly dict functionality
+    def test_keys(self):
+        self.myslave.add(self.a1)
+        self.assertEqual(self.myslave.keys(), [self.a1.get_id()])
+        self.assertEqual(list(self.myslave.iterkeys()), [self.a1.get_id()])
+        self.myslave.add(self.b1)
+        self.myslave.add(self.c1)
+        self.assertSetEqual(set(self.myslave.keys()), {self.a1.get_id(), self.b1.get_id(), self.c1.get_id()})
+        self.assertSetEqual(set(self.myslave.iterkeys()), {self.a1.get_id(), self.b1.get_id(), self.c1.get_id()})
+
     # Boolean operators
     def test_isdisjoint(self):
         self.assertRaises(UndefinedBehaviorError, self.myslave.isdisjoint, self.mymaster)

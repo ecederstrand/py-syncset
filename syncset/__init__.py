@@ -224,6 +224,18 @@ class SyncSet(set):
         """
         return self.__class__(super(SyncSet, self).symmetric_difference(other))
 
+    def iterkeys(self):
+        """
+        Return iterator over the unique ids of the syncset
+        """
+        return self.item_dict.iterkeys()
+
+    def keys(self):
+        """
+        Return the unique ids of the syncset
+        """
+        return self.item_dict.keys()
+
 
 class OneWaySyncSet(SyncSet):
     """
