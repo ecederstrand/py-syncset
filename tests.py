@@ -231,6 +231,22 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     def test_union(self):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c1])
+        data = self.myslave.__or__(self.mymaster)
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertIn(self.b1, data)
+        self.assertIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        self.mymaster = OneWaySyncSet([self.b1, self.c1])
+        data = self.myslave | self.mymaster
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertIn(self.b1, data)
+        self.assertIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        self.mymaster = OneWaySyncSet([self.b1, self.c1])
         data = self.myslave.union(self.mymaster)
         self.assertIsInstance(data, OneWaySyncSet)
         self.assertIn(self.a1, data)
@@ -247,6 +263,22 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.assertIn(self.c1, data)
 
     def test_intersection(self):
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        self.mymaster = OneWaySyncSet([self.b1, self.c1])
+        data = self.myslave.__and__(self.mymaster)
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.b1, data)
+        self.assertNotIn(self.a1, data)
+        self.assertNotIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        self.mymaster = OneWaySyncSet([self.b1, self.c1])
+        data = self.myslave & self.mymaster
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.b1, data)
+        self.assertNotIn(self.a1, data)
+        self.assertNotIn(self.c1, data)
+
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c1])
         data = self.myslave.intersection(self.mymaster)
@@ -268,6 +300,22 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     def test_difference(self):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c1])
+        data = self.myslave.__sub__(self.mymaster)
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+        self.assertNotIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        self.mymaster = OneWaySyncSet([self.b1, self.c1])
+        data = self.myslave - self.mymaster
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+        self.assertNotIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        self.mymaster = OneWaySyncSet([self.b1, self.c1])
         data = self.myslave.difference(self.mymaster)
         self.assertIsInstance(data, OneWaySyncSet)
         self.assertIn(self.a1, data)
@@ -287,7 +335,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     def test_update(self):
         self.myslave = OneWaySyncSet([self.a1])
         self.mymaster = OneWaySyncSet([self.b1])
-        self.myslave.update(self.mymaster)
+        self.myslave.__ior__(self.mymaster)
         self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertIn(self.b1, self.myslave)
@@ -301,7 +349,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
 
         self.myslave = OneWaySyncSet([self.a1])
         self.mymaster = OneWaySyncSet([self.b1])
-        self.myslave.__ior__(self.mymaster)
+        self.myslave.update(self.mymaster)
         self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertIn(self.b1, self.myslave)
@@ -318,7 +366,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     def test_intersection_update(self):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
-        self.myslave.intersection_update(self.mymaster)
+        self.myslave.__iand__(self.mymaster)
         self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.b1, self.myslave)
         self.assertNotIn(self.a1, self.myslave)
@@ -334,7 +382,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
 
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
-        self.myslave.__iand__(self.mymaster)
+        self.myslave.intersection_update(self.mymaster)
         self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.b1, self.myslave)
         self.assertNotIn(self.a1, self.myslave)
@@ -352,7 +400,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     def test_difference_update(self):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
-        self.myslave.difference_update(self.mymaster)
+        self.myslave.__isub__(self.mymaster)
         self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertNotIn(self.b1, self.myslave)
@@ -366,7 +414,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
 
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
-        self.myslave.__isub__(self.mymaster)
+        self.myslave.difference_update(self.mymaster)
         self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertNotIn(self.b1, self.myslave)
@@ -383,8 +431,8 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     def test_symmetric_difference_update(self):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
-        self.myslave.symmetric_difference_update(self.mymaster)
-        self.assertIsInstance(self.myslave, OneWaySyncSet)
+        self.myslave.__ixor__(self.mymaster)
+        self.assertIsInstance(self.myslave, SyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertIn(self.c3, self.myslave)
         self.assertNotIn(self.b1, self.myslave)
@@ -399,8 +447,8 @@ class OneWaySyncSetTest(_OneWayBaseClass):
 
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
-        self.myslave.__ixor__(self.mymaster)
-        self.assertIsInstance(self.myslave, SyncSet)
+        self.myslave.symmetric_difference_update(self.mymaster)
+        self.assertIsInstance(self.myslave, OneWaySyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertIn(self.c3, self.myslave)
         self.assertNotIn(self.b1, self.myslave)
@@ -554,6 +602,22 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_union(self):
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c1])
+        data = self.myset.__or__(self.otherset)
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertIn(self.b1, data)
+        self.assertIn(self.c1, data)
+
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        self.otherset = TwoWaySyncSet([self.b1, self.c1])
+        data = self.myset | self.otherset
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertIn(self.b1, data)
+        self.assertIn(self.c1, data)
+
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        self.otherset = TwoWaySyncSet([self.b1, self.c1])
         data = self.myset.union(self.otherset)
         self.assertIsInstance(data, TwoWaySyncSet)
         self.assertIn(self.a1, data)
@@ -571,6 +635,33 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
 
     def test_intersection(self):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
+        set1 = OneWaySyncSet([self.a2, self.c1])
+        data = self.myslave.__and__(set1)
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a2, data)
+        self.assertNotIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+        self.assertNotIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        set1 = OneWaySyncSet([self.a2, self.c1])
+        data = self.myslave & set1
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a2, data)
+        self.assertNotIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+        self.assertNotIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
+        set1 = OneWaySyncSet([self.a2, self.c1])
+        data = self.myslave.intersection(set1)
+        self.assertIsInstance(data, OneWaySyncSet)
+        self.assertIn(self.a2, data)
+        self.assertNotIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+        self.assertNotIn(self.c1, data)
+
+        self.myslave = OneWaySyncSet([self.a1, self.b1])
         set1 = OneWaySyncSet([self.a1, self.b2])
         set2 = OneWaySyncSet([self.a2, self.c1])
         data = self.myslave.intersection(set1, set2)
@@ -584,6 +675,27 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_difference(self):
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         set1 = TwoWaySyncSet([self.b1])
+        data = self.myset.__sub__(set1)
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        set1 = TwoWaySyncSet([self.b1])
+        data = self.myset - set1
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        set1 = TwoWaySyncSet([self.b1])
+        data = self.myset.difference(set1)
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertNotIn(self.b1, data)
+
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        set1 = TwoWaySyncSet([self.b1])
         set2 = TwoWaySyncSet([self.c1])
         data = self.myset.difference(set1, set2)
         self.assertIsInstance(data, TwoWaySyncSet)
@@ -592,6 +704,22 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
         self.assertNotIn(self.c1, data)
 
     def test_symmetric_difference(self):
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        self.otherset = TwoWaySyncSet([self.b1, self.c1])
+        data = self.myset.__xor__(self.otherset)
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertIn(self.c1, data)
+        self.assertNotIn(self.b1, data)
+
+        self.myset = TwoWaySyncSet([self.a1, self.b1])
+        self.otherset = TwoWaySyncSet([self.b1, self.c1])
+        data = self.myset ^ self.otherset
+        self.assertIsInstance(data, TwoWaySyncSet)
+        self.assertIn(self.a1, data)
+        self.assertIn(self.c1, data)
+        self.assertNotIn(self.b1, data)
+
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c1])
         data = self.myset.symmetric_difference(self.otherset)
@@ -604,7 +732,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_update(self):
         self.myset = TwoWaySyncSet([self.a1])
         self.otherset = TwoWaySyncSet([self.b1])
-        self.myset.update(self.otherset)
+        self.myset.__ior__(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.a1, self.myset)
         self.assertIn(self.b1, self.myset)
@@ -618,7 +746,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
 
         self.myset = TwoWaySyncSet([self.a1])
         self.otherset = TwoWaySyncSet([self.b1])
-        self.myset.__ior__(self.otherset)
+        self.myset.update(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.a1, self.myset)
         self.assertIn(self.b1, self.myset)
@@ -635,7 +763,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_intersection_update(self):
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c3])
-        self.myset.intersection_update(self.otherset)
+        self.myset.__iand__(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.b1, self.myset)
         self.assertNotIn(self.a1, self.myset)
@@ -651,7 +779,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
 
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c3])
-        self.myset.__iand__(self.otherset)
+        self.myset.intersection_update(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.b1, self.myset)
         self.assertNotIn(self.a1, self.myset)
@@ -669,7 +797,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_difference_update(self):
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c3])
-        self.myset.difference_update(self.otherset)
+        self.myset.__isub__(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.a1, self.myset)
         self.assertNotIn(self.b1, self.myset)
@@ -683,7 +811,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
 
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c3])
-        self.myset.__isub__(self.otherset)
+        self.myset.difference_update(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.a1, self.myset)
         self.assertNotIn(self.b1, self.myset)
@@ -700,7 +828,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_symmetric_difference_update(self):
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c3])
-        self.myset.symmetric_difference_update(self.otherset)
+        self.myset.__ixor__(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.a1, self.myset)
         self.assertIn(self.c3, self.myset)
@@ -716,7 +844,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
 
         self.myset = TwoWaySyncSet([self.a1, self.b1])
         self.otherset = TwoWaySyncSet([self.b1, self.c3])
-        self.myset.__ixor__(self.otherset)
+        self.myset.symmetric_difference_update(self.otherset)
         self.assertIsInstance(self.myset, TwoWaySyncSet)
         self.assertIn(self.a1, self.myset)
         self.assertIn(self.c3, self.myset)

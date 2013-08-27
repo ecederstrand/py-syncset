@@ -1,5 +1,7 @@
 import logging
 
+log = logging.getLogger(__name__)
+
 
 class UndefinedBehaviorError(ArithmeticError):
     pass
@@ -30,14 +32,11 @@ class SyncSet(set):
     ``OneWaySyncSet`` and ``TwoWaySyncSet`` instead.
     """
     def __init__(self, iterable=None):
-        if not iterable: iterable = []
-        self.logger = logging.getLogger('%s.%s' %
-                        (__name__, self.__class__.__name__))
-
         super(SyncSet, self).__init__()
         self.item_dict = dict()
-        # Make sure items enter the syncset the way we want by ising the add() method.
-        [self.add(item) for item in iterable]
+        # Make sure items enter the syncset the way we want by using the add() method.
+        if iterable:
+            self.update(iterable)
 
     def copy(self):
         """
@@ -60,7 +59,7 @@ class SyncSet(set):
 
     def __contains__(self, item):
         """
-        Only returns ``True`` if the same version of the item is present
+        The ``in`` keyword. Only returns ``True`` if the same version of the item is present
         """
         if item.get_id() in self.item_dict:
             return self.item_dict[item.get_id()].__cmp__(item) == 0
@@ -91,13 +90,12 @@ class SyncSet(set):
         """
         Update the set, adding elements from all others
         """
-        for other in others:
-            [self.add(item) for item in other]
+        map(self.add, (item for other in others for item in other))
         return self
 
-    def __iand__( self, *others):
+    def __iand__(self, *others):
         """
-        The ``&=`` operator. Alias for ``intersection_update``
+        The ``&=`` operator. Alias for ``intersection_update()``
         """
         return self.intersection_update(*others)
 
@@ -106,13 +104,12 @@ class SyncSet(set):
         Update the set, keeping only elements found in it and all ``others``.
         """
         for other in others:
-            [self.remove(item) for item in (self.difference(other))]
-            [self.add(item) for item in (self.intersection(other))]
+            map(self.remove, self.difference(other))
         return self
 
     def __isub__(self, *others):
         """
-        The ``-=`` operator. Alias for ``difference_update``
+        The ``-=`` operator. Alias for ``difference_update()``
         """
         return self.difference_update(*others)
 
@@ -120,13 +117,12 @@ class SyncSet(set):
         """
         Update the syncset, removing elements found in ``others``.
         """
-        for other in others:
-            [self.discard(item) for item in other]
+        map(self.discard, (item for other in others for item in other))
         return self
 
     def __ixor__(self, other):
         """
-        The ``^=`` operator. Alias for ``intersection_update``
+        The ``^=`` operator. Alias for ``intersection_update()``
         """
         return self.symmetric_difference_update(other)
 
@@ -134,10 +130,11 @@ class SyncSet(set):
         """
         Update the syncset, keeping only elements found in either set, but not in both.
         """
-        to_remove = self.intersection(other)
-        to_add = other.difference(self)
-        [self.remove(item) for item in to_remove]
-        [self.add(item) for item in to_add]
+        # We need to calculate in two steps. Otherwise, intersection() will impact difference()
+        in_common = self.intersection(other)
+        only_in_other = other.difference(self)
+        map(self.remove, in_common)
+        map(self.add, only_in_other)
         return self
 
     def remove(self, item):
@@ -158,10 +155,17 @@ class SyncSet(set):
         super(SyncSet, self).clear()
 
     def __ne__(self, other):
+        """
+        The ``!=`` operator.
+        """
         return not self.__eq__(other)
 
     def __eq__(self, other):
-        if len(self) != len(other): return False
+        """
+        The ``==`` operator.
+        """
+        if len(self) != len(other):
+            return False
         for item in self:
             if not item in other:
                 return False
@@ -171,24 +175,39 @@ class SyncSet(set):
         raise UndefinedBehaviorError('The result of this operator is undefined')
 
     def __le__(self, other):
+        """
+        The ``<=`` operator. Alias for ``issubset()``
+        """
         return self.issubset(other)
 
     def issubset(self, other):
         raise UndefinedBehaviorError('The result of this operator is undefined')
 
     def __lt__(self, other):
+        """
+        The ``<`` operator.
+        """
         raise UndefinedBehaviorError('The result of this operator is undefined')
 
     def __ge__(self, other):
+        """
+        The ``>=`` operator. Alias for ``issuperset()``
+        """
         return self.issuperset(other)
 
     def issuperset(self, other):
         raise UndefinedBehaviorError('The result of this operator is undefined')
 
     def __gt__(self, other):
+        """
+        The ``>`` operator.
+        """
         raise UndefinedBehaviorError('The result of this operator is undefined')
 
     def __or__(self, *others):
+        """
+        The ``|`` operator. Alias for ``union()``
+        """
         return self.union(self, *others)
 
     def union(self, *others):
@@ -196,27 +215,33 @@ class SyncSet(set):
         Return a new syncset with elements from the syncset and all others
         """
         items = self.copy()
-        for other in others:
-            [items.add(item) for item in other]
-        return items
+        return items.update(*others)
 
     def __and__(self, *others):
-        return self.intersection(self, *others)
+        """
+        The ``&`` operator. Alias for ``intersection()`` implemented in subclasses.
+        """
+        return self.intersection(*others)
 
     def __sub__(self, *others):
-        return self.difference(self, *others)
+        """
+        The ``-`` operator. Alias for ``difference()``
+        """
+        return self.difference(*others)
 
     def difference(self, *others):
         """
         Return a new syncset with elements in the syncset that are not in the others
         """
         items = self.copy()
-        for other in others:
-            [items.discard(item) for item in other]
+        map(items.discard, (item for other in others for item in other))
         return items
 
     def __xor__(self, other):
-        return self.symmetric_difference(self, other)
+        """
+        The ``^`` operator. Alias for ``symmetric_difference()``
+        """
+        return self.symmetric_difference(other)
 
     def symmetric_difference(self, other):
         """
@@ -265,7 +290,7 @@ class OneWaySyncSet(SyncSet):
             master_item = master[common_id]
             # force __cmp__(); cmp(a, b) somehow prefers a.__eq__
             if self_item.__cmp__(master_item) != 0:
-                self.logger.debug('oneway diff: %s differs from %s' % (self_item, master_item))
+                log.debug('oneway diff: %s differs from %s' % (self_item, master_item))
                 updated_in_master.add(master_item)
                 outdated_in_self.add(self_item)
         return only_in_self, only_in_master, outdated_in_self, updated_in_master
@@ -318,10 +343,10 @@ class TwoWaySyncSet(SyncSet):
             self_item = self[common_id]
             other_item = other[common_id]
             if self_item > other_item:
-                self.logger.debug('diff: %s larger than %s' % (self_item, other_item))
+                log.debug('diff: %s larger than %s' % (self_item, other_item))
                 newer_in_self.add(self_item)
             elif self_item < other_item:
-                self.logger.debug('diff: %s smaller than %s' % (self_item, other_item))
+                log.debug('diff: %s smaller than %s' % (self_item, other_item))
                 newer_in_other.add(other_item)
         return only_in_self, only_in_other, newer_in_self, newer_in_other
 
@@ -390,7 +415,7 @@ class SyncSetMember(object):
 
     def __eq__(self, other):
         """
-        Compare members by id only
+        The ``==`` operator. Compare members by id only
         """
         return hash(self) == hash(other)
 
