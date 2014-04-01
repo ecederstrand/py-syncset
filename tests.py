@@ -11,11 +11,14 @@ class TestMember(SyncSetMember):
         self.uid = uid
         self.changekey = changekey
 
-    def get_id(self): return self.uid
-    def get_changekey(self): return self.changekey
-    def __repr__(self): return self.__class__.__name__+repr((self.uid, self.changekey))
-    def __unicode__(self): return repr(self)
-    def __str__(self): return unicode(self)
+    def get_id(self):
+        return self.uid
+
+    def get_changekey(self):
+        return self.changekey
+
+    def __repr__(self):
+        return self.__class__.__name__ + repr((self.uid, self.changekey))
 
 
 class _OneWayBaseClass(unittest.TestCase):
@@ -23,15 +26,15 @@ class _OneWayBaseClass(unittest.TestCase):
     def setUp(self):
         self.myslave = OneWaySyncSet()
         self.mymaster = OneWaySyncSet()
-        self.a1 = TestMember('a', 1)
-        self.a2 = TestMember('a', 2)
-        self.a3 = TestMember('a', 3)
-        self.b1 = TestMember('b', 1)
-        self.b2 = TestMember('b', 2)
-        self.b3 = TestMember('b', 3)
-        self.c1 = TestMember('c', 1)
-        self.c2 = TestMember('c', 2)
-        self.c3 = TestMember('c', 3)
+        self.a1 = TestMember(u'a', 1)
+        self.a2 = TestMember(u'a', 2)
+        self.a3 = TestMember(u'a', 3)
+        self.b1 = TestMember(u'b', 1)
+        self.b2 = TestMember(u'b', 2)
+        self.b3 = TestMember(u'b', 3)
+        self.c1 = TestMember(u'c', 1)
+        self.c2 = TestMember(u'c', 2)
+        self.c3 = TestMember(u'c', 3)
 
 
 class _TwoWayBaseClass(unittest.TestCase):
@@ -39,15 +42,15 @@ class _TwoWayBaseClass(unittest.TestCase):
     def setUp(self):
         self.myset = TwoWaySyncSet()
         self.otherset = TwoWaySyncSet()
-        self.a1 = TestMember('a', 1)
-        self.a2 = TestMember('a', 2)
-        self.a3 = TestMember('a', 3)
-        self.b1 = TestMember('b', 1)
-        self.b2 = TestMember('b', 2)
-        self.b3 = TestMember('b', 3)
-        self.c1 = TestMember('c', 1)
-        self.c2 = TestMember('c', 2)
-        self.c3 = TestMember('c', 3)
+        self.a1 = TestMember(u'a', 1)
+        self.a2 = TestMember(u'a', 2)
+        self.a3 = TestMember(u'a', 3)
+        self.b1 = TestMember(u'b', 1)
+        self.b2 = TestMember(u'b', 2)
+        self.b3 = TestMember(u'b', 3)
+        self.c1 = TestMember(u'c', 1)
+        self.c2 = TestMember(u'c', 2)
+        self.c3 = TestMember(u'c', 3)
 
 
 class SyncSetMemberTest(unittest.TestCase):
@@ -79,7 +82,7 @@ class SyncSetMemberTest(unittest.TestCase):
         m = TestMember(1, 2)
         self.assertEqual(m.get_id(), 1)
         self.assertEqual(m.get_changekey(), 2)
-        self.assertRaises(TypeError, hash, TestMember([1, 'a'], [1, 'b']))
+        self.assertRaises(TypeError, hash, TestMember([1, u'a'], [1, u'b']))
 
     def test_member_compare(self):
         """Test SyncSetMember implementation for different object types"""
@@ -88,11 +91,11 @@ class SyncSetMemberTest(unittest.TestCase):
         # Floats
         self._test_member(1.0, 1.1)
         # Strings
-        self._test_member('alpha', 'beta')
+        self._test_member(u'alpha', u'beta')
         # Unicode
         self._test_member(u'æble', u'øvelse')
         # Tuples
-        self._test_member(('a', 'b'), ('a', 'c'))
+        self._test_member((u'a', u'b'), (u'a', u'c'))
         # Datetimes
         self._test_member(datetime(2010, 1, 1, 8, 0, 0), datetime(2010, 1, 1, 10, 0, 0))
         # All other id and changekey types must implement __hash__, __eq__ and __cmp__
@@ -202,12 +205,10 @@ class OneWaySyncSetTest(_OneWayBaseClass):
     # Strictly dict functionality
     def test_keys(self):
         self.myslave.add(self.a1)
-        self.assertEqual(self.myslave.keys(), [self.a1.get_id()])
-        self.assertEqual(list(self.myslave.iterkeys()), [self.a1.get_id()])
+        self.assertEqual(list(self.myslave.keys()), [self.a1.get_id()])
         self.myslave.add(self.b1)
         self.myslave.add(self.c1)
         self.assertSetEqual(set(self.myslave.keys()), {self.a1.get_id(), self.b1.get_id(), self.c1.get_id()})
-        self.assertSetEqual(set(self.myslave.iterkeys()), {self.a1.get_id(), self.b1.get_id(), self.c1.get_id()})
 
     # Boolean operators
     def test_isdisjoint(self):
@@ -880,5 +881,5 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
         self.assertEqual(newer_in_other, TwoWaySyncSet([self.b2]))
 
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     unittest.main()

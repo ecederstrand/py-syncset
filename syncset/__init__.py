@@ -42,9 +42,7 @@ class SyncSet(set):
         """
         Return a copy of self
         """
-        obj = super(SyncSet, self).copy()
-        obj.item_dict = self.item_dict.copy()
-        return obj
+        return self.__class__(self.item_dict.values())
 
     def sync(self, deleted, updated, new):
         """
@@ -90,7 +88,9 @@ class SyncSet(set):
         """
         Update the set, adding elements from all others
         """
-        map(self.add, (item for other in others for item in other))
+        for other in others:
+            for item in other:
+                self.add(item)
         return self
 
     def __iand__(self, *others):
@@ -104,7 +104,8 @@ class SyncSet(set):
         Update the set, keeping only elements found in it and all ``others``.
         """
         for other in others:
-            map(self.remove, self.difference(other))
+            for item in self.difference(other):
+                self.remove(item)
         return self
 
     def __isub__(self, *others):
@@ -117,7 +118,9 @@ class SyncSet(set):
         """
         Update the syncset, removing elements found in ``others``.
         """
-        map(self.discard, (item for other in others for item in other))
+        for other in others:
+            for item in other:
+                self.discard(item)
         return self
 
     def __ixor__(self, other):
@@ -133,8 +136,10 @@ class SyncSet(set):
         # We need to calculate in two steps. Otherwise, intersection() will impact difference()
         in_common = self.intersection(other)
         only_in_other = other.difference(self)
-        map(self.remove, in_common)
-        map(self.add, only_in_other)
+        for item in in_common:
+            self.remove(item)
+        for item in only_in_other:
+            self.add(item)
         return self
 
     def remove(self, item):
@@ -234,7 +239,9 @@ class SyncSet(set):
         Return a new syncset with elements in the syncset that are not in the others
         """
         items = self.copy()
-        map(items.discard, (item for other in others for item in other))
+        for other in others:
+            for item in other:
+                items.discard(item)
         return items
 
     def __xor__(self, other):
@@ -248,12 +255,6 @@ class SyncSet(set):
         Return a new syncset with elements in either the syncset or other but not both
         """
         return self.__class__(super(SyncSet, self).symmetric_difference(other))
-
-    def iterkeys(self):
-        """
-        Return iterator over the unique ids of the syncset
-        """
-        return self.item_dict.iterkeys()
 
     def keys(self):
         """
@@ -419,12 +420,26 @@ class SyncSetMember(object):
         """
         return hash(self) == hash(other)
 
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
     def __cmp__(self, other):
         """
         Compares members by id and changekey
         """
-        c = cmp(self.get_id(), other.get_id())
+        a, b = self.get_id(), other.get_id()
+        c = (a > b) - (a < b)
         if c != 0: return c
         # Use the comparison implementation of whatever object type
         # is used as changekey.
-        return cmp(self.get_changekey(), other.get_changekey())
+        a, b = self.get_changekey(), other.get_changekey()
+        return (a > b) - (a < b)
