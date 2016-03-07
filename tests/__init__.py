@@ -171,8 +171,14 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.assertFalse(self.myslave.contains_similar(self.b1))
 
     def test_equal(self):
-        self.assertEqual(OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()], OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()])
-        self.assertEqual(OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()], OneWaySyncSet([self.b1, self.a1])[self.a1.get_id()])
+        self.assertEqual(
+            OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()],
+            OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()]
+        )
+        self.assertEqual(
+            OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()],
+            OneWaySyncSet([self.b1, self.a1])[self.a1.get_id()]
+        )
         self.assertEqual(OneWaySyncSet([self.b1, self.a1]), OneWaySyncSet([self.a1, self.b1]))
 
     def test_remove(self):
@@ -473,7 +479,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
             self.myslave.add(m)
         for m in (self.c3, self.b2):
             self.mymaster.add(m)
-        only_in_self, only_in_master, outdated_in_self, updated_in_master =  self.myslave.diff(self.mymaster)
+        only_in_self, only_in_master, outdated_in_self, updated_in_master = self.myslave.diff(self.mymaster)
         for coll in (only_in_self, only_in_master, outdated_in_self, updated_in_master):
             self.assertIsInstance(coll, OneWaySyncSet)
         self.assertEqual(only_in_self, OneWaySyncSet([self.a2]))
@@ -550,8 +556,14 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
         self.assertFalse(self.myset.contains_similar(self.b1))
 
     def test_equal(self):
-        self.assertEqual(TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()], TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()])
-        self.assertEqual(TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()], TwoWaySyncSet([self.b1, self.a1])[self.a1.get_id()])
+        self.assertEqual(
+            TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()],
+            TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()]
+        )
+        self.assertEqual(
+            TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()],
+            TwoWaySyncSet([self.b1, self.a1])[self.a1.get_id()]
+        )
         self.assertEqual(TwoWaySyncSet([self.b1, self.a1]), TwoWaySyncSet([self.a1, self.b1]))
 
     def test_remove(self):
@@ -857,7 +869,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
             self.myset.add(m)
         for m in (self.a1, self.b2, self.c3):
             self.otherset.add(m)
-        only_in_self, only_in_other, newer_in_self, newer_in_other =  self.myset.diff(self.otherset)
+        only_in_self, only_in_other, newer_in_self, newer_in_other = self.myset.diff(self.otherset)
         for coll in (only_in_self, only_in_other, newer_in_self, newer_in_other):
             self.assertIsInstance(coll, TwoWaySyncSet)
         self.assertEqual(only_in_self, TwoWaySyncSet())
@@ -872,7 +884,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
             self.myset.add(m)
         for m in (self.a1, self.b2, m10):
             self.otherset.add(m)
-        only_in_self, only_in_other, newer_in_self, newer_in_other =  self.myset.diff(self.otherset)
+        only_in_self, only_in_other, newer_in_self, newer_in_other = self.myset.diff(self.otherset)
         for coll in (only_in_self, only_in_other, newer_in_self, newer_in_other):
             self.assertIsInstance(coll, TwoWaySyncSet)
         self.assertEqual(only_in_self, TwoWaySyncSet([m0]))

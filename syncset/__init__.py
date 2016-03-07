@@ -14,21 +14,21 @@ class SyncSet(set):
     the same but have different object revisions. Operations are
     based on the object id and changekey (aka. revision, timestamp etc.).
 
-    Don't use this class directly. Use the ``OneWay`SyncSet`` or ``TwoWaySyncSet`` 
-    implementation instead to choose between "master wins" and 
+    Don't use this class directly. Use the ``OneWay`SyncSet`` or ``TwoWaySyncSet``
+    implementation instead to choose between "master wins" and
     "newest-version-wins" semantics.
 
     Set members can extend ``SyncSetMember`` which defines the requirements
     for syncset members.
 
-    To be able to get a syncset member by id, ```SyncSet`` also implements 
-    parts of the ``dict()`` interface, so retrieval by id is cheap compared to 
+    To be able to get a syncset member by id, ```SyncSet`` also implements
+    parts of the ``dict()`` interface, so retrieval by id is cheap compared to
     a ``set()``.
 
-    The ``isdisjoint``, ``issubset`` and ``issuperset`` methods return 
-    ``UndefinedBehaviorError`` instead of implicitly using the base ``set()`` 
-    implementation because it is not defined what the return values are in the 
-    context of syncset members with changekeys. Use the ``diff()`` method of 
+    The ``isdisjoint``, ``issubset`` and ``issuperset`` methods return
+    ``UndefinedBehaviorError`` instead of implicitly using the base ``set()``
+    implementation because it is not defined what the return values are in the
+    context of syncset members with changekeys. Use the ``diff()`` method of
     ``OneWaySyncSet`` and ``TwoWaySyncSet`` instead.
     """
     def __init__(self, iterable=None):
@@ -146,6 +146,12 @@ class SyncSet(set):
         del self.item_dict[item.get_id()]
         super(SyncSet, self).remove(item)
 
+    def __delattr__(self, item):
+        """
+        The ``del`` keyword.
+        """
+        return self.remove(item)
+
     def discard(self, item):
         if item.get_id() in self.item_dict:
             self.remove(item)
@@ -172,7 +178,7 @@ class SyncSet(set):
         if len(self) != len(other):
             return False
         for item in self:
-            if not item in other:
+            if item not in other:
                 return False
         return True
 
@@ -269,9 +275,9 @@ class OneWaySyncSet(SyncSet):
     on an id and changekey of syncset members.
 
     Set members can extend ``SyncSetMember`` which defines the requirements
-    for syncset members. One way diff only needs changekey values to be comparable, 
+    for syncset members. One way diff only needs changekey values to be comparable,
     not sortable.
-    
+
     For all methods defined in this class, data passed in arguments are preferred
     to existing data.
     """
@@ -303,7 +309,7 @@ class OneWaySyncSet(SyncSet):
 
     def intersection(self, *others):
         """
-        Return a new syncset with elements common to the syncset and all others. For 
+        Return a new syncset with elements common to the syncset and all others. For
         common elements, the last one among the sets are preferred.
         """
         items = self.__class__()
@@ -322,11 +328,11 @@ class TwoWaySyncSet(SyncSet):
     Implements two way diff with a ``SyncSet``. Diffing is based
     on an id and changekey of syncset members.
 
-    Set members can extend ``SyncSetMember`` which defines the interface for 
-    syncset members. Two way diff needs changekey values to be sortable (e.g. 
+    Set members can extend ``SyncSetMember`` which defines the interface for
+    syncset members. Two way diff needs changekey values to be sortable (e.g.
     a revision number or a timestamp).
 
-    For all methods defined in this class, data passed in arguments are 
+    For all methods defined in this class, data passed in arguments are
     preferred to existing data only if existing data is older.
     """
     def diff(self, other):
@@ -366,7 +372,7 @@ class TwoWaySyncSet(SyncSet):
 
     def intersection(self, *others):
         """
-        Return a new syncset with elements common to the syncset and all others. 
+        Return a new syncset with elements common to the syncset and all others.
         For common elements, the newest one among the sets are preferred.
         """
         items = self.__class__()
@@ -386,11 +392,11 @@ class SyncSetMember(object):
     by consumers. Override at least ``get_id``and ``get_changekey`` methods when
     subclassing.
 
-    The value returned by get_id must be hashable and must never change through 
+    The value returned by get_id must be hashable and must never change through
     the lifetime of the object.
 
-    When used for one way syncing, changekeys must only be comparable. When used 
-    for two way syncing, changekey values must be logically sortable using 
+    When used for one way syncing, changekeys must only be comparable. When used
+    for two way syncing, changekey values must be logically sortable using
     cmp(a, b).
     """
     def get_id(self):
@@ -438,7 +444,8 @@ class SyncSetMember(object):
         """
         a, b = self.get_id(), other.get_id()
         c = (a > b) - (a < b)
-        if c != 0: return c
+        if c != 0:
+            return c
         # Use the comparison implementation of whatever object type
         # is used as changekey.
         a, b = self.get_changekey(), other.get_changekey()

@@ -1,9 +1,27 @@
+import os
 from setuptools import setup
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name='syncset',
     version='1.2',
-    description='Extension of Python set() which  is able to synchronize sets of comparable objects',
     author='Erik Cederstrand',
     author_email='erik@cederstrand.dk',
-    packages=['syncset'])
+    license='BSD',
+    description='Extension of Python set() which  is able to synchronize sets of comparable objects',
+    long_description=read('README.rst'),
+    keywords='set dict sync synchronize synchronization',
+    packages=['syncset'],
+    test_suite='tests',
+    zip_safe=False,
+    url='https://github.com/ecederstrand/py-syncset',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Topic :: Software Development :: Libraries',
+        'License :: OSI Approved :: BSD License',
+        'Programming Language :: Python :: 3',
+    ],
+)
