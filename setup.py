@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+To upload to PyPI:
+   python setup.py sdist upload
+"""
 import os
 from setuptools import setup
 
@@ -8,11 +13,11 @@ def read(fname):
 
 setup(
     name='syncset',
-    version='1.2',
+    version='1.2.1',
     author='Erik Cederstrand',
     author_email='erik@cederstrand.dk',
     license='BSD',
-    description='Extension of Python set() which  is able to synchronize sets of comparable objects',
+    description='Extension of Python set() which is able to synchronize sets of comparable objects',
     long_description=read('README.rst'),
     keywords='set dict sync synchronize synchronization',
     packages=['syncset'],
