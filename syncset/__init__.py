@@ -386,7 +386,7 @@ class TwoWaySyncSet(SyncSet):
         return items
 
 
-class SyncSetMember(object):
+class SyncSetMember:
     """
     Defines the requirements of members of a ``SyncSet``. Meant to be subclassed
     by consumers. Override at least ``get_id``and ``get_changekey`` methods when
@@ -399,6 +399,8 @@ class SyncSetMember(object):
     for two way syncing, changekey values must be logically sortable using
     cmp(a, b).
     """
+    __slots__ = tuple()
+
     def get_id(self):
         """
         Return whatever the object regards as a unique id. Must return
