@@ -9,6 +9,18 @@ method, you can do one- or two-way synchronization of comparable object sets via
 All standard ``set()`` and ``dict()`` methods are supported, except for a handful which raise ``UndefinedBehaviorError``
 because the method doesn't make sense (``>`` operator, for example).
 
+.. image:: https://badge.fury.io/py/syncset.svg
+    :target: https://badge.fury.io/py/syncset
+
+.. image:: https://landscape.io/github/ecederstrand/py-syncset/master/landscape.png
+   :target: https://landscape.io/github/ecederstrand/py-syncset/master
+
+.. image:: https://secure.travis-ci.org/ecederstrand/py-syncset.png
+    :target: http://travis-ci.org/ecederstrand/py-syncset
+
+.. image:: https://coveralls.io/repos/ecederstrand/py-syncset/badge.svg?branch=master
+    :target: https://coveralls.io/r/ecederstrand/py-syncset?branch=master
+
 
 Usage
 ~~~~~
