@@ -5,6 +5,12 @@ python:
   - "3.5-dev" # 3.5 development branch
   - "nightly" # currently points to 3.6-dev
 # command to install dependencies
-install: "python setup.py -q install"
+install:
+  - "python setup.py -q install"
+  - "pip install coverage"
+  - "pip install coveralls"
 # command to run tests
-script: nosetests
+script:
+  - "coverage run setup.py test"
+after_success:
+    coveralls
