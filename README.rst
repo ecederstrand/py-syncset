@@ -21,7 +21,6 @@ because the method doesn't make sense (``>`` operator, for example).
 .. image:: https://coveralls.io/repos/github/ecederstrand/py-syncset/badge.svg?branch=
     :target: https://coveralls.io/github/ecederstrand/py-syncset?branch=
 
-
 Usage
 ~~~~~
 Let's say we want to maintain a local copy of some web pages. We let the ``Last-Modified``HTTP header decide when a page
