@@ -32,69 +32,93 @@ Our URL caching code could have lots of extra functionality. Let's assume here t
 First, we want to tell ``syncset`` what we consider a unique ID and a revision (changekey). We create a minimal wrapper
 class that inherits ``SyncSetMember`` and makes ``url`` the unique ID and ``last_modified`` the changekey.
 
->>> import syncset
->>> from datetime import date
->>>
->>>
->>> class WebPage:
->>>    def __init__(self, url, last_modified):
->>>       self.url = url
->>>       self.last_modified = last_modified
->>>       self.body = ''
->>>
->>>    def __repr__(self):
->>>       return self.__class__.__name__ + repr((self.url, self.last_modified))
->>>
->>>
->>> class SyncableWebPage(WebPage, syncset.SyncSetMember):
->>>    def get_id(self):
->>>       return self.url
->>>
->>>    def get_changekey(self):
->>>       return self.last_modified
+.. code-block:: python
+
+    import syncset
+    from datetime import date
+   
+   
+    class WebPage:
+       def __init__(self, url, last_modified):
+          self.url = url
+          self.last_modified = last_modified
+          self.body = ''
+   
+       def __repr__(self):
+          return self.__class__.__name__ + repr((self.url, self.last_modified))
+   
+   
+    class SyncableWebPage(WebPage, syncset.SyncSetMember):
+       def get_id(self):
+          return self.url
+   
+       def get_changekey(self):
+          return self.last_modified
 
 We want to sync these URLs:
 
->>> foo = "http://example.com/foo.html"
->>> bar = "http://example.com/bar.html"
->>> baz = "http://example.com/baz.html"
+.. code-block:: python
+
+    foo = "http://example.com/foo.html"
+    bar = "http://example.com/bar.html"
+    baz = "http://example.com/baz.html"
 
 This is our outdated copy:
 
->>> old_urls = syncset.OneWaySyncSet()
->>> old_urls.add(SyncableWebPage(foo, date(2012, 1, 1)))
->>> old_urls.add(SyncableWebPage(bar, date(2011, 12, 8)))
+.. code-block:: python
+
+    old_urls = syncset.OneWaySyncSet()
+    old_urls.add(SyncableWebPage(foo, date(2012, 1, 1)))
+    old_urls.add(SyncableWebPage(bar, date(2011, 12, 8)))
 
 
 This is the server version, after fetching the latest ``Last-Modified`` header in an HTTP HEAD request:
 
->>> new_urls = syncset.OneWaySyncSet()
->>> new_urls.add(SyncableWebPage(foo, date(2016, 2, 1)))
->>> new_urls.add(SyncableWebPage(bar, date(2011, 12, 8)))
->>> new_urls.add(SyncableWebPage(baz, date(2012, 2, 15)))
+.. code-block:: python
+
+    new_urls = syncset.OneWaySyncSet()
+    new_urls.add(SyncableWebPage(foo, date(2016, 2, 1)))
+    new_urls.add(SyncableWebPage(bar, date(2011, 12, 8)))
+    new_urls.add(SyncableWebPage(baz, date(2012, 2, 15)))
 
 Now, let's find the difference between the two. ``diff()`` returns four ``SyncSet`` objects:
 
->>> only_in_old, only_in_new, outdated_in_old, updated_in_new = old_urls.diff(new_urls)
->>> only_in_old
-OneWaySyncSet([])
->>> only_in_new
-OneWaySyncSet([SyncableWebPage('http://mysrv/baz.html', datetime.date(2012, 2, 15))])
->>> outdated_in_old
-neWaySyncSet([SyncableWebPage('http://mysrv/foo.html', datetime.date(2012, 1, 1))])
->>> updated_in_new
-OneWaySyncSet([SyncableWebPage('http://mysrv/foo.html', datetime.date(2012, 2, 1))])
+.. code-block:: python
+
+    only_in_old, only_in_new, outdated_in_old, updated_in_new = old_urls.diff(new_urls)
+    print(only_in_old)
+    OneWaySyncSet([])
+    print(only_in_new)
+    
+    OneWaySyncSet(
+      [SyncableWebPage('http://mysrv/baz.html', datetime.date(2012, 2, 15))]
+    )
+    
+    print(outdated_in_old)
+    
+    OneWaySyncSet(
+      [SyncableWebPage('http://mysrv/foo.html', datetime.date(2012, 1, 1))]
+    )
+    
+    print(updated_in_new)
+    
+    OneWaySyncSet(
+      [SyncableWebPage('http://mysrv/foo.html', datetime.date(2012, 2, 1))]
+    )
 
 As you can see, ``foo`` needs to be updated,  ``bar`` is unchanged and ``baz`` is new on the server. After issuing HTTP
 GET requests on ``foo`` and ``baz`` to get the updated content, let's update the local copy:
 
->>> old_urls.update(new_urls)
->>> old_urls
-... OneWaySyncSet([
-...   SyncableWebPage('http://example.com/foo.html', datetime.date(2016, 2, 1)),
-...   SyncableWebPage('http://example.com/bar.html', datetime.date(2011, 12, 8)),
-...   SyncableWebPage('http://example.com/baz.html', datetime.date(2012, 2, 15))
-... ])
+.. code-block:: python
+
+    old_urls.update(new_urls)
+    print(old_urls)
+
+    OneWaySyncSet([
+      SyncableWebPage('http://example.com/foo.html', datetime.date(2016, 2, 1)),
+      SyncableWebPage('http://example.com/bar.html', datetime.date(2011, 12, 8)),
+      SyncableWebPage('http://example.com/baz.html', datetime.date(2012, 2, 15))
+    ])
 
 This updates ``foo`` and adds ``baz``.
 
