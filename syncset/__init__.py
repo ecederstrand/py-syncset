@@ -146,7 +146,7 @@ class SyncSet(set):
         del self.item_dict[item.get_id()]
         super(SyncSet, self).remove(item)
 
-    def __delattr__(self, item):
+    def __delitem__(self, item):
         """
         The ``del`` keyword.
         """
@@ -157,7 +157,7 @@ class SyncSet(set):
             self.remove(item)
 
     def pop(self):
-        get_id, item = self.item_dict.popitem()
+        _, item = self.item_dict.popitem()
         super(SyncSet, self).remove(item)
         return item
 
@@ -297,7 +297,7 @@ class OneWaySyncSet(SyncSet):
             master_item = master[common_id]
             # force __cmp__(); cmp(a, b) somehow prefers a.__eq__
             if self_item.__cmp__(master_item) != 0:
-                log.debug('oneway diff: %s differs from %s' % (self_item, master_item))
+                log.debug('oneway diff: %s differs from %s', self_item, master_item)
                 updated_in_master.add(master_item)
                 outdated_in_self.add(self_item)
         return only_in_self, only_in_master, outdated_in_self, updated_in_master
@@ -350,10 +350,10 @@ class TwoWaySyncSet(SyncSet):
             self_item = self[common_id]
             other_item = other[common_id]
             if self_item > other_item:
-                log.debug('diff: %s larger than %s' % (self_item, other_item))
+                log.debug('diff: %s larger than %s', self_item, other_item)
                 newer_in_self.add(self_item)
             elif self_item < other_item:
-                log.debug('diff: %s smaller than %s' % (self_item, other_item))
+                log.debug('diff: %s smaller than %s', self_item, other_item)
                 newer_in_other.add(other_item)
         return only_in_self, only_in_other, newer_in_self, newer_in_other
 

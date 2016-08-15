@@ -150,6 +150,13 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.myslave.clear()
         self.assertTrue(len(self.myslave) == 0)
 
+    def test_del(self):
+        for m in (self.a1, self.b3):
+            self.myslave.add(m)
+        for m in (self.a1, self.b3):
+            del self.myslave[m]
+        self.assertTrue(len(self.myslave) == 0)
+
     def test_len(self):
         for m in (self.a1, self.a2):
             self.myslave.add(m)
