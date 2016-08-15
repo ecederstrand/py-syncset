@@ -18,8 +18,8 @@ because the method doesn't make sense (``>`` operator, for example).
 .. image:: https://secure.travis-ci.org/ecederstrand/py-syncset.png
     :target: http://travis-ci.org/ecederstrand/py-syncset
 
-.. image:: https://coveralls.io/repos/ecederstrand/py-syncset/badge.svg?branch=master
-    :target: https://coveralls.io/r/ecederstrand/py-syncset?branch=master
+.. image:: https://coveralls.io/repos/ecederstrand/py-syncset/badge.svg?branch=
+    :target: https://coveralls.io/r/ecederstrand/py-syncset?branch=
 
 
 Usage
