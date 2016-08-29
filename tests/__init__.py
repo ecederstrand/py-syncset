@@ -7,6 +7,8 @@ from syncset import SyncSet, OneWaySyncSet, TwoWaySyncSet, SyncSetMember, Undefi
 
 # Create a minimal implementation of the SyncSetMember interface
 class TestMember(SyncSetMember):
+    __slots__ = ('uid', 'changekey')
+
     def __init__(self, uid, changekey):
         self.uid = uid
         self.changekey = changekey
@@ -16,9 +18,6 @@ class TestMember(SyncSetMember):
 
     def get_changekey(self):
         return self.changekey
-
-    def __repr__(self):
-        return self.__class__.__name__ + repr((self.uid, self.changekey))
 
 
 class _OneWayBaseClass(unittest.TestCase):
@@ -76,7 +75,16 @@ class SyncSetMemberTest(unittest.TestCase):
         self.assertNotEqual(TestMember(low, low), TestMember(high, low))
         self.assertNotEqual(TestMember(high, low), TestMember(low, low))
         self.assertGreater(TestMember(low, high), TestMember(low, low))
+        self.assertGreaterEqual(TestMember(low, high), TestMember(low, low))
         self.assertLess(TestMember(low, low), TestMember(low, high))
+        self.assertLessEqual(TestMember(low, low), TestMember(low, high))
+
+    def test_prototype(self):
+        m = SyncSetMember()
+        with self.assertRaises(NotImplementedError):
+            m.get_id()
+        with self.assertRaises(NotImplementedError):
+            m.get_changekey()
 
     def test_member(self):
         m = TestMember(1, 2)
@@ -100,6 +108,13 @@ class SyncSetMemberTest(unittest.TestCase):
         self._test_member(datetime(2010, 1, 1, 8, 0, 0), datetime(2010, 1, 1, 10, 0, 0))
         # All other id and changekey types must implement __hash__, __eq__ and __cmp__
         # according to SyncSetMember specs.
+
+
+class SyncSetTest(unittest.TestCase):
+    def test_add(self):
+        # add() semantics is left as an implementation detail for subclasses
+        with self.assertRaises(NotImplementedError):
+            SyncSet().add(TestMember('a', 1))
 
 
 class OneWaySyncSetTest(_OneWayBaseClass):
@@ -177,6 +192,9 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.assertTrue(self.myslave.contains_similar(self.a2))
         self.assertFalse(self.myslave.contains_similar(self.b1))
 
+    def test_get(self):
+        self.assertEqual(OneWaySyncSet([self.a1, self.b1]).get(self.a1.get_id()), self.a1)
+
     def test_equal(self):
         self.assertEqual(
             OneWaySyncSet([self.a1, self.b1])[self.a1.get_id()],
@@ -187,6 +205,8 @@ class OneWaySyncSetTest(_OneWayBaseClass):
             OneWaySyncSet([self.b1, self.a1])[self.a1.get_id()]
         )
         self.assertEqual(OneWaySyncSet([self.b1, self.a1]), OneWaySyncSet([self.a1, self.b1]))
+        self.assertNotEqual(OneWaySyncSet([self.a1]), OneWaySyncSet([self.a1, self.b1]))
+        self.assertNotEqual(OneWaySyncSet([self.a1, self.b1]), OneWaySyncSet([self.a1, self.c1]))
 
     def test_remove(self):
         self.myslave.add(self.a1)
@@ -494,6 +514,12 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.assertEqual(outdated_in_self, OneWaySyncSet([self.b1]))
         self.assertEqual(updated_in_master, OneWaySyncSet([self.b2]))
 
+    # In-place updating
+    def test_sync(self):
+        only_in_self, only_in_master, outdated_in_self, updated_in_master = self.myslave.diff(self.mymaster)
+        self.myslave.sync(deleted=only_in_self, updated=updated_in_master, new=only_in_master)
+        self.assertEqual(self.myslave, self.mymaster)
+
 
 class TwoWaySyncSetTest(_TwoWayBaseClass):
     def test_constructor(self):
@@ -562,6 +588,9 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
         self.assertTrue(self.myset.contains_similar(self.a2))
         self.assertFalse(self.myset.contains_similar(self.b1))
 
+    def test_get(self):
+        self.assertEqual(TwoWaySyncSet([self.a1, self.b1]).get(self.a1.get_id()), self.a1)
+
     def test_equal(self):
         self.assertEqual(
             TwoWaySyncSet([self.a1, self.b1])[self.a1.get_id()],
@@ -572,6 +601,8 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
             TwoWaySyncSet([self.b1, self.a1])[self.a1.get_id()]
         )
         self.assertEqual(TwoWaySyncSet([self.b1, self.a1]), TwoWaySyncSet([self.a1, self.b1]))
+        self.assertNotEqual(OneWaySyncSet([self.a1]), OneWaySyncSet([self.a1, self.b1]))
+        self.assertNotEqual(OneWaySyncSet([self.a1, self.b1]), OneWaySyncSet([self.a1, self.c1]))
 
     def test_remove(self):
         self.myset.add(self.a1)
@@ -898,6 +929,12 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
         self.assertEqual(only_in_other, TwoWaySyncSet([m10]))
         self.assertEqual(newer_in_self, TwoWaySyncSet([self.a2]))
         self.assertEqual(newer_in_other, TwoWaySyncSet([self.b2]))
+
+    # In-place updating
+    def test_sync(self):
+        only_in_self, only_in_master, outdated_in_self, updated_in_master = self.myset.diff(self.otherset)
+        self.myset.sync(deleted=only_in_self, updated=updated_in_master, new=only_in_master)
+        self.assertEqual(self.myset, self.otherset)
 
 
 if __name__ == '__main__':

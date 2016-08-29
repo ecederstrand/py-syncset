@@ -50,7 +50,7 @@ class SyncSet(set):
         """
         self.difference_update(deleted)
         self.symmetric_difference_update(updated)
-        self.add(new)
+        self.update(new)
 
     def add(self, item):
         raise NotImplementedError()
@@ -76,7 +76,7 @@ class SyncSet(set):
         return self.item_dict[item_id]
 
     def get(self, item_id, default=None):
-        return self[item_id] if item_id in self.item_dict else default
+        return self.item_dict.get(item_id, default)
 
     def __ior__(self, *others):
         """
