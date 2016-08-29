@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='syncset',
-    version='1.2.2',
+    version='1.2.3',
     author='Erik Cederstrand',
     author_email='erik@cederstrand.dk',
     license='BSD',
