@@ -1,0 +1,6 @@
+python-targets:
+  - 3
+
+ignore-paths:
+  - demo
+
