@@ -23,10 +23,10 @@ because the method doesn't make sense (``>`` operator, for example).
 
 Usage
 ~~~~~
-Let's say we want to maintain a local copy of some web pages. We let the ``Last-Modified``HTTP header decide when a page
+Let's say we want to maintain a local copy of some web pages. We let the ``Last-Modified`` HTTP header decide when a page
 has changed. We'll use ``date`` values in the following, for the sake of brevity.
 
-Our URL caching code could have lots of extra functionality. Let's assume here that out main class is ``WebPage``.
+Our URL caching code could have lots of extra functionality. Let's assume here that our main class is ``WebPage``.
 
 First, we want to tell ``syncset`` what we consider a unique ID and a revision (changekey). We create a minimal wrapper
 class that inherits ``SyncSetMember`` and makes ``url`` the unique ID and ``last_modified`` the changekey.
