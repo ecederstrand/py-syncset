@@ -1,17 +1,17 @@
 language: python
 python:
-  - "3.4"
-  - "3.5"
-  - "3.6-dev
-  - "nightly"
+- '3.4'
+- '3.5'
+- 3.6-dev
+- nightly
 # command to install dependencies
 install:
-  - "python setup.py -q install"
-  - "pip install coverage"
-  - "pip install coveralls"
+- python setup.py -q install
+- pip install coverage
+- pip install coveralls
 # command to run tests
 script:
-  - "nosetests tests"
-  - "coverage run --source=syncset setup.py test"
+- nosetests tests
+- coverage run --source=syncset setup.py test
 after_success:
     coveralls
