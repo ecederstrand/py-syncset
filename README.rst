@@ -1,13 +1,39 @@
 Python SyncSet
 ==============
-``SyncSet`` is an extension of the standard Python ``set()``. With ``SyncSet``, you can do set operations
-on sets of mutable and immutable objects that, in addition to the normal unique ID of set members, has a changekey
-attribute (a timestamp, autoincrement value, revision ID, hash etc.). Via set operations and a custom ``diff()``
-method, you can do one- or two-way synchronization of comparable object sets via the ``OneWaySyncSet`` and
-``TwoWaySyncSet`` classes, respectively. Examples are syncing files, contacts and calendar items.
+When synchronizing two collections of objects, you quickly end up with code like this:
+
+.. code-block:: python
+
+    old_coll = get_some_items()
+    new_coll = get_some_other_items()
+    old_coll_map = {get_the_id(i): i for i in old_coll}
+    new_coll_map = {get_the_id(i): i for i in new_coll}
+    only_in_old, only_in_new, updated, outdated = [], [], [], []
+    for k, old_item in old_coll_map.items():
+        if k in new_coll_map:
+            new_item = new_coll_map[k]
+            old_changekey = get_the_changekey(old_item)
+            new_changekey = get_the_changekey(new_item)
+            if old_changekey > new_changekey:
+                outdated.append(old_item)
+                updated.append(new_item)
+            elif new_changekey > old_changekey:
+                outdated.append(new_item)
+                updated.append(old_item)
+        else:
+            only_in_old.append(old_item)
+    # And we still haven't built the 'only_in_new' list...
+
+``SyncSet`` is an extension of the standard Python ``set()`` which supports this pattern with a one-liner. With 
+``SyncSet``, you can easily do set operations on sets of mutable and immutable objects that, in addition to the 
+normal unique ID of set members, have a changekey attribute (a timestamp, autoincrement value, revision ID, hash 
+etc.). Via set operations and a custom ``diff()`` method, you can do one- or two-way synchronization of comparable 
+object sets via the ``OneWaySyncSet`` and ``TwoWaySyncSet`` classes, respectively. Examples are syncing files, 
+web pages, contacts or calendar items.
 
 All standard ``set()`` and ``dict()`` methods are supported, except for a handful which raise ``UndefinedBehaviorError``
-because the method doesn't make sense (``>`` operator, for example).
+because the method doesn't make sense (``>`` operator, for example). Items in the set are required to implement the very 
+simple interface ``SyncSetMember``.
 
 .. image:: https://badge.fury.io/py/syncset.svg
     :target: https://badge.fury.io/py/syncset
