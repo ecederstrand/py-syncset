@@ -8,7 +8,7 @@ When synchronizing two collections of objects, you quickly end up with code like
     new_coll = get_some_other_items()
     old_coll_map = {get_the_id(i): i for i in old_coll}
     new_coll_map = {get_the_id(i): i for i in new_coll}
-    only_in_old, only_in_new, updated, outdated = [], [], [], []
+    only_in_old, only_in_new, outdated, updated = [], [], [], []
     for k, old_item in old_coll_map.items():
         if k in new_coll_map:
             new_item = new_coll_map[k]
@@ -24,8 +24,13 @@ When synchronizing two collections of objects, you quickly end up with code like
             only_in_old.append(old_item)
     # And we still haven't built the 'only_in_new' list...
 
-``SyncSet`` is an extension of the standard Python ``set()`` which supports this pattern with a one-liner. With 
-``SyncSet``, you can easily do set operations on sets of mutable and immutable objects that, in addition to the 
+``SyncSet`` is an extension of the standard Python ``set()`` which supports this pattern with a one-liner:
+
+.. code-block:: python
+
+    only_in_old, only_in_new, outdated, updated = old_coll.diff(new_coll)
+
+With ``SyncSet``, you can easily do set operations on sets of mutable and immutable objects that, in addition to the 
 normal unique ID of set members, have a changekey attribute (a timestamp, autoincrement value, revision ID, hash 
 etc.). Via set operations and a custom ``diff()`` method, you can do one- or two-way synchronization of comparable 
 object sets via the ``OneWaySyncSet`` and ``TwoWaySyncSet`` classes, respectively. Examples are syncing files, 
