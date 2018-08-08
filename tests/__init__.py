@@ -516,7 +516,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
 
     # In-place updating
     def test_sync(self):
-        only_in_self, only_in_master, outdated_in_self, updated_in_master = self.myslave.diff(self.mymaster)
+        only_in_self, only_in_master, _, updated_in_master = self.myslave.diff(self.mymaster)
         self.myslave.sync(deleted=only_in_self, updated=updated_in_master, new=only_in_master)
         self.assertEqual(self.myslave, self.mymaster)
 
@@ -932,7 +932,7 @@ class TwoWaySyncSetTest(_TwoWayBaseClass):
 
     # In-place updating
     def test_sync(self):
-        only_in_self, only_in_master, outdated_in_self, updated_in_master = self.myset.diff(self.otherset)
+        only_in_self, only_in_master, _, updated_in_master = self.myset.diff(self.otherset)
         self.myset.sync(deleted=only_in_self, updated=updated_in_master, new=only_in_master)
         self.assertEqual(self.myset, self.otherset)
 
