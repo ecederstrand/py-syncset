@@ -35,7 +35,7 @@ class BaseSyncSet(set):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, iterable=None):
-        super(SyncSet, self).__init__()
+        super().__init__()
         self.item_dict = dict()
         # Make sure items enter the syncset the way we want by using the add() method.
         if iterable:
@@ -156,7 +156,7 @@ class BaseSyncSet(set):
 
     def remove(self, item):
         del self.item_dict[item.get_id()]
-        super(SyncSet, self).remove(item)
+        super().remove(item)
 
     def __delitem__(self, item):
         """
@@ -170,12 +170,12 @@ class BaseSyncSet(set):
 
     def pop(self):
         _, item = self.item_dict.popitem()
-        super(SyncSet, self).remove(item)
+        super().remove(item)
         return item
 
     def clear(self):
         self.item_dict.clear()
-        super(SyncSet, self).clear()
+        super().clear()
 
     def __ne__(self, other):
         """
@@ -272,7 +272,7 @@ class BaseSyncSet(set):
         """
         Return a new syncset with elements in either the syncset or other but not both
         """
-        return self.__class__(super(SyncSet, self).symmetric_difference(other))
+        return self.__class__(super().symmetric_difference(other))
 
     def keys(self):
         """
@@ -317,7 +317,7 @@ class OneWaySyncSet(BaseSyncSet):
     def add(self, item):
         self.discard(item)
         self.item_dict[item.get_id()] = item
-        super(SyncSet, self).add(item)
+        super().add(item)
 
     def intersection(self, *others):
         """
@@ -380,7 +380,7 @@ class TwoWaySyncSet(BaseSyncSet):
             else:
                 self.remove(item)
         self.item_dict[item.get_id()] = item
-        super(SyncSet, self).add(item)
+        super().add(item)
 
     def intersection(self, *others):
         """
