@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
 """
-To upload to PyPI:
-   python setup.py sdist upload
+Release notes:
+* Bump version in syncset/__init__.py
+* Commit and push changes
+* Build package: rm dist/* && python setup.py sdist bdist_wheel
+* Push to PyPI: twine upload dist/*
+* Create release on GitHub
 """
+import io
 import os
 from setuptools import setup
+
+
+__version__ = None
+with io.open(os.path.join(os.path.dirname(__file__), 'syncset/__init__.py'), encoding='utf-8') as f:
+    for l in f:
+        if not l.startswith('__version__'):
+            continue
+        __version__ = l.split('=')[1].strip(' "\'\n')
+        break
 
 
 def read(fname):
@@ -13,7 +27,7 @@ def read(fname):
 
 setup(
     name='syncset',
-    version='1.2.3',
+    version=__version__,
     author='Erik Cederstrand',
     author_email='erik@cederstrand.dk',
     license='BSD',
