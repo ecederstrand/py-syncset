@@ -293,20 +293,20 @@ class OneWaySyncSet(SyncSet):
     For all methods defined in this class, data passed in arguments are preferred
     to existing data.
     """
-    def diff(self, master):
+    def diff(self, other):
         """
-        Returns four SyncSets containing the members that are only in self,
-        only in other, outdated in self, updated in master.
+        Returns four syncsets containing the members that are only in self, only in
+        other, outdated in self, updated in master. 'other' is considered the master.
         """
-        only_in_self = self.difference(master)
-        only_in_master = master.difference(self)
-        common = self.intersection(master)
+        only_in_self = self.difference(other)
+        only_in_master = other.difference(self)
+        common = self.intersection(other)
         updated_in_master = self.__class__()
         outdated_in_self = self.__class__()
         for item in common:
             common_id = item.get_id()
             self_item = self[common_id]
-            master_item = master[common_id]
+            master_item = other[common_id]
             # force __cmp__(); cmp(a, b) somehow prefers a.__eq__
             if self_item.__cmp__(master_item) != 0:
                 log.debug('oneway diff: %s differs from %s', self_item, master_item)
