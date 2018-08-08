@@ -43,8 +43,8 @@ simple interface ``SyncSetMember``.
 .. image:: https://badge.fury.io/py/syncset.svg
     :target: https://badge.fury.io/py/syncset
 
-.. image:: https://landscape.io/github/ecederstrand/py-syncset/master/landscape.png
-   :target: https://landscape.io/github/ecederstrand/py-syncset/master
+.. image:: https://api.codacy.com/project/badge/Grade/a35900e707cc4b71b40745d7553c26df
+    :target: https://www.codacy.com/project/ecederstrand/py-syncset/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ecederstrand/py-syncset&amp;utm_campaign=Badge_Grade_Dashboard
 
 .. image:: https://secure.travis-ci.org/ecederstrand/py-syncset.png
     :target: http://travis-ci.org/ecederstrand/py-syncset
