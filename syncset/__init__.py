@@ -1,3 +1,4 @@
+import abc
 import logging
 
 log = logging.getLogger(__name__)
@@ -31,6 +32,8 @@ class SyncSet(set):
     context of syncset members with changekeys. Use the ``diff()`` method of
     ``OneWaySyncSet`` and ``TwoWaySyncSet`` instead.
     """
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, iterable=None):
         super(SyncSet, self).__init__()
         self.item_dict = dict()
@@ -52,7 +55,16 @@ class SyncSet(set):
         self.symmetric_difference_update(updated)
         self.update(new)
 
+    @abc.abstractmethod
+    def diff(self, other):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def add(self, item):
+        super().add(item)
+
+    @abc.abstractmethod
+    def intersection(self, *others):
         raise NotImplementedError()
 
     def __contains__(self, item):
