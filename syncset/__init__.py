@@ -8,21 +8,21 @@ class UndefinedBehaviorError(ArithmeticError):
     pass
 
 
-class SyncSet(set):
+class BaseSyncSet(set):
     """
     An extension of ``set()`` which, in addition to the usual membership
     operators, also supports comparing syncset members that are logically
     the same but have different object revisions. Operations are
     based on the object id and changekey (aka. revision, timestamp etc.).
 
-    Don't use this class directly. Use the ``OneWay`SyncSet`` or ``TwoWaySyncSet``
+    Don't use this class directly. Use the ``OneWaySyncSet`` or ``TwoWaySyncSet``
     implementation instead to choose between "master wins" and
     "newest-version-wins" semantics.
 
     Set members can extend ``SyncSetMember`` which defines the requirements
     for syncset members.
 
-    To be able to get a syncset member by id, ```SyncSet`` also implements
+    To be able to get a syncset member by id, this class also implements
     parts of the ``dict()`` interface, so retrieval by id is cheap compared to
     a ``set()``.
 
@@ -281,9 +281,9 @@ class SyncSet(set):
         return self.item_dict.keys()
 
 
-class OneWaySyncSet(SyncSet):
+class OneWaySyncSet(BaseSyncSet):
     """
-    Implements one way diff with a master ``SyncSet``. Diffing is based
+    Implements one way diff with a master syncset. Diffing is based
     on an id and changekey of syncset members.
 
     Set members can extend ``SyncSetMember`` which defines the requirements
@@ -335,9 +335,9 @@ class OneWaySyncSet(SyncSet):
         return items
 
 
-class TwoWaySyncSet(SyncSet):
+class TwoWaySyncSet(BaseSyncSet):
     """
-    Implements two way diff with a ``SyncSet``. Diffing is based
+    Implements two way diff with a syncset. Diffing is based
     on an id and changekey of syncset members.
 
     Set members can extend ``SyncSetMember`` which defines the interface for
@@ -349,7 +349,7 @@ class TwoWaySyncSet(SyncSet):
     """
     def diff(self, other):
         """
-        Returns four SyncSets containing the members that are only in self, only
+        Returns four syncsets containing the members that are only in self, only
         in other, newer in self, and newer in other.
         """
         only_in_self = self.difference(other)
@@ -400,7 +400,7 @@ class TwoWaySyncSet(SyncSet):
 
 class SyncSetMember:
     """
-    Defines the requirements of members of a ``SyncSet``. Meant to be subclassed
+    Defines the requirements of members of a syncset. Meant to be subclassed
     by consumers. Override at least ``get_id``and ``get_changekey`` methods when
     subclassing.
 

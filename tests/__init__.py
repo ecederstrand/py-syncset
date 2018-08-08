@@ -2,7 +2,7 @@
 
 import unittest
 from datetime import datetime
-from syncset import SyncSet, OneWaySyncSet, TwoWaySyncSet, SyncSetMember, UndefinedBehaviorError
+from syncset import BaseSyncSet, OneWaySyncSet, TwoWaySyncSet, SyncSetMember, UndefinedBehaviorError
 
 
 # Create a minimal implementation of the SyncSetMember interface
@@ -108,13 +108,6 @@ class SyncSetMemberTest(unittest.TestCase):
         self._test_member(datetime(2010, 1, 1, 8, 0, 0), datetime(2010, 1, 1, 10, 0, 0))
         # All other id and changekey types must implement __hash__, __eq__ and __cmp__
         # according to SyncSetMember specs.
-
-
-class SyncSetTest(unittest.TestCase):
-    def test_add(self):
-        # add() semantics is left as an implementation detail for subclasses
-        with self.assertRaises(NotImplementedError):
-            SyncSet().add(TestMember('a', 1))
 
 
 class OneWaySyncSetTest(_OneWayBaseClass):
@@ -466,7 +459,7 @@ class OneWaySyncSetTest(_OneWayBaseClass):
         self.myslave = OneWaySyncSet([self.a1, self.b1])
         self.mymaster = OneWaySyncSet([self.b1, self.c3])
         self.myslave.__ixor__(self.mymaster)
-        self.assertIsInstance(self.myslave, SyncSet)
+        self.assertIsInstance(self.myslave, BaseSyncSet)
         self.assertIn(self.a1, self.myslave)
         self.assertIn(self.c3, self.myslave)
         self.assertNotIn(self.b1, self.myslave)
