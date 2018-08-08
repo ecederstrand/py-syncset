@@ -63,6 +63,8 @@ class BaseSyncSet(set):
 
     @abc.abstractmethod
     def add(self, item):
+        if self.__class__ == BaseSyncSet:
+            raise NotImplementedError()
         super().add(item)
 
     @abc.abstractmethod

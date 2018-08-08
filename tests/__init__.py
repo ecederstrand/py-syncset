@@ -110,6 +110,16 @@ class SyncSetMemberTest(unittest.TestCase):
         # according to SyncSetMember specs.
 
 
+class BaseSyncSetTest(unittest.TestCase):
+    def test_add(self):
+        # diff() and intersection() semantics are left as an implementation detail for subclasses
+        with self.assertRaises(NotImplementedError):
+            BaseSyncSet().diff('XXX')
+        with self.assertRaises(NotImplementedError):
+            BaseSyncSet().add('XXX')
+        with self.assertRaises(NotImplementedError):
+            BaseSyncSet().intersection('XXX')
+
 class OneWaySyncSetTest(_OneWayBaseClass):
     def test_constructor(self):
         self.assertEqual(self.myslave, self.mymaster)
