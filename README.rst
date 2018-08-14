@@ -133,7 +133,7 @@ Now, let's find the difference between the two. ``diff()`` returns four ``SyncSe
     print(updated_in_new)
     
     OneWaySyncSet(
-      [SyncableWebPage('http://mysrv/foo.html', datetime.date(2012, 2, 1))]
+      [SyncableWebPage('http://mysrv/foo.html', datetime.date(2016, 2, 1))]
     )
 
 As you can see, ``foo`` needs to be updated,  ``bar`` is unchanged and ``baz`` is new on the server. After issuing HTTP
