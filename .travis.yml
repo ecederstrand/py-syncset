@@ -1,11 +1,12 @@
 language: python
 os: linux
-dist: xenial
+dist: bionic
 sudo: true
 python:
 - '3.5'
 - '3.6'
 - '3.7'
+- '3.8'
 - nightly
 # command to install dependencies
 install:
@@ -14,7 +15,6 @@ install:
 - pip install coveralls
 # command to run tests
 script:
-- nosetests tests
 - coverage run --source=syncset setup.py test
 after_success:
     coveralls
