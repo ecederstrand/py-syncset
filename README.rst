@@ -46,8 +46,8 @@ simple interface ``SyncSetMember``.
 .. image:: https://api.codacy.com/project/badge/Grade/a35900e707cc4b71b40745d7553c26df
     :target: https://www.codacy.com/project/ecederstrand/py-syncset/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ecederstrand/py-syncset&amp;utm_campaign=Badge_Grade_Dashboard
 
-.. image:: https://secure.travis-ci.org/ecederstrand/py-syncset.png
-    :target: http://travis-ci.org/ecederstrand/py-syncset
+.. image:: https://api.travis-ci.com/ecederstrand/py-syncset.png
+    :target: http://travis-ci.com/ecederstrand/py-syncset
 
 .. image:: https://coveralls.io/repos/github/ecederstrand/py-syncset/badge.svg?branch=
     :target: https://coveralls.io/github/ecederstrand/py-syncset?branch=
