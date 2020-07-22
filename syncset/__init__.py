@@ -381,8 +381,7 @@ class TwoWaySyncSet(BaseSyncSet):
         if existing_item:
             if existing_item >= item:
                 return
-            else:
-                self.remove(item)
+            self.remove(item)
         self.item_dict[item.get_id()] = item
         super().add(item)
 
