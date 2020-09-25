@@ -3,11 +3,11 @@ os: linux
 dist: bionic
 sudo: true
 python:
-- '3.5'
-- '3.6'
-- '3.7'
-- '3.8'
-- nightly
+- "3.6"
+- "3.7"
+- "3.8"
+- "3.9-dev"
+- "nightly"
 # command to install dependencies
 install:
 - python setup.py -q install
@@ -15,6 +15,6 @@ install:
 - pip install coveralls
 # command to run tests
 script:
-- coverage run --source=syncset setup.py test
+- coverage run --source=syncset -m unittest
 after_success:
     coveralls
